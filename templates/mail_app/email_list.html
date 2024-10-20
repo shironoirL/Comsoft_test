@@ -1,0 +1,108 @@
+<!-- templates/mail_app/email_list.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email List</title>
+    <style>
+        /* Simple styles for the progress bar and table */
+        #progress-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+        }
+        #progress-bar div {
+            width: 0;
+            height: 30px;
+            background-color: #4caf50;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        #fetch-mails {
+            margin-bottom: 20px;
+        }
+    </style>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h1>Email List</h1>
+
+<button id="fetch-mails">Fetch Latest Mails</button>
+
+<div id="progress-bar" style="display: none;"><div>Reading messages...</div></div>
+
+<table id="email-table">
+    <tr>
+        <th>Subject</th>
+        <th>From</th>
+        <th>Sent At</th>
+        <th>Received At</th>
+        <th>Attachments</th>
+        <th>Body</th>
+    </tr>
+    {% for email in emails %}
+    <tr>
+        <td>{{ email.subject }}</td>
+        <td>{{ email.from_address }}</td>
+        <td>{{ email.sent_at }}</td>
+        <td>{{ email.received_at }}</td>
+        <td>
+            {% for attachment in email.attachments.all %}
+                <a href="{{ attachment.file.url }}">{{ attachment.filename }}</a><br>
+            {% endfor %}
+        </td>
+        <td>{{ email.body|truncatechars:50 }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<script>
+    $(document).ready(function() {
+        var socket;
+        $('#fetch-mails').click(function() {
+            // Show the progress bar
+            $('#progress-bar').show();
+
+            socket = new WebSocket('ws://' + window.location.host + '/ws/emails/');
+
+            socket.onmessage = function(e) {
+                var data = JSON.parse(e.data);
+                if (data.status === 'complete') {
+                    $('#progress-bar div').css('width', '100%').text('Fetching complete');
+                    // Refresh the table
+                    location.reload();
+                } else if (data.status === 'processing') {
+                    // Update progress bar
+                    var progress = data.progress || 0;
+                    $('#progress-bar div').css('width', progress + '%').text('Fetching emails: ' + progress + '%');
+                }
+                if (data.error) {
+                    alert(data.error);
+                }
+            };
+
+            socket.onopen = function(e) {
+                console.log('WebSocket connection established.');
+                // Start the email fetching process
+                socket.send(JSON.stringify({'action': 'start_fetching'}));
+            };
+
+            socket.onclose = function(e) {
+                console.log('WebSocket connection closed.');
+            };
+        });
+    });
+</script>
+
+</body>
+</html>

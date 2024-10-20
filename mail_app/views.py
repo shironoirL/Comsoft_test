@@ -1,3 +1,7 @@
 from django.shortcuts import render
+from .models import EmailMessage
 
-# Create your views here.
+
+def email_list(request):
+    emails = EmailMessage.objects.all()
+    return render(request, "mail_app/email_list.html", {"emails": emails})

@@ -1,0 +1,26 @@
+version: '3.8'  # Укажите версию Docker Compose
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"  # Используем значение по умолчанию, если переменная не задана
+    restart: always
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"  # Пробрасываем порт Redis
+    restart: always
+
+volumes:
+  postgres_data:
+    driver: local

@@ -11,10 +11,23 @@ python = "^3.11"
 Django = "^5.1.2"
 djangorestframework = "^3.15.2"
 daphne = "^4.1.2"
+celery = "^5.4.0"
+channels = "^4.1.0"
+channels-redis = "^4.2.0"
+psycopg2 = "^2.9.10"
+python-dotenv = "^1.0.1"
+imapclient = "^3.0.1"
+beautifulsoup4 = "^4.12.3"
 
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
+chardet = "^5.2.0"
+
+
+[tool.poetry.group.async_test.dependencies]
+aioimaplib = "^1.1.0"
+aiofiles = "^24.1.0"
 
 [build-system]
 requires = ["poetry-core"]
