@@ -24,7 +24,7 @@ POSTGRES_PORT=5433
 
 ### 4. Email setup and start fetching
 
-Navigate to <http://127.0.0.1:8000/admin/mail_app/emailaccount/> and add email account
+Navigate to <http://127.0.0.1:8000/admin/mail_app/emailaccount/> with ```admin admin``` credentials
+and add email account
 
-<http://127.0.0.1:8000/> and click "Start fetching"
-
+<http://127.0.0.1:8000/> and click "Fetch Mails"
